@@ -87,7 +87,7 @@ public class ExtractTest {
         expectedMentions.add("narendramodi");
         expectedMentions.add("cmshehbaz");
         expectedMentions.add("common_sense");
-        expectedMentions.add("great_1ntelligence");
+        expectedMentions.add("great-1ntelligence");
 
         assertEquals("expected mentions", mentionedUsers, expectedMentions);
     }

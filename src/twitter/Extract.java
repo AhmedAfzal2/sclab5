@@ -3,8 +3,13 @@
  */
 package twitter;
 
+import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Extract consists of methods that extract information from a list of tweets.
@@ -24,7 +29,20 @@ public class Extract {
      *         every tweet in the list.
      */
     public static Timespan getTimespan(List<Tweet> tweets) {
-        throw new RuntimeException("not implemented");
+        Instant min = Instant.MAX;
+        Instant max = Instant.MIN;
+        Instant thisInstant;
+
+        // iterate through tweets and find min and max timestamp
+        for (Tweet tweet: tweets) {
+            thisInstant = tweet.getTimestamp();
+            if (thisInstant.isAfter(max))
+                max = thisInstant;
+            if (thisInstant.isBefore(min))
+                min = thisInstant;
+        }
+
+        return new Timespan(min, max);
     }
 
     /**
@@ -43,7 +61,22 @@ public class Extract {
      *         include a username at most once.
      */
     public static Set<String> getMentionedUsers(List<Tweet> tweets) {
-        throw new RuntimeException("not implemented");
-    }
+        Set<String> mentionedUsers = new HashSet<>();
 
+        // (?<![A-Za-z0-9_-]) means that @ is not preceded by any valid char
+        // @([A-Za-z0-9_-]+) is the valid username chars
+        // (?![A-Za-z0-9_-]) means that username is not succeeded by any valid char
+        Pattern pattern = Pattern.compile("(?<![A-Za-z0-9_\\-])@([A-Za-z0-9_\\-]+)(?![A-Za-z0-9_\\-])");
+
+        // apply the pattern on every
+        for (Tweet tweet : tweets) {
+            Matcher matcher = pattern.matcher(tweet.getText());
+            while (matcher.find()) {
+                String username = matcher.group(1).toLowerCase(Locale.ROOT);
+                mentionedUsers.add(username);
+            }
+        }
+
+        return mentionedUsers;
+    }
 }
