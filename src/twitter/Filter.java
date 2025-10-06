@@ -3,7 +3,11 @@
  */
 package twitter;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Filter consists of methods that filter a list of tweets for those matching a
@@ -27,7 +31,13 @@ public class Filter {
      *         in the same order as in the input list.
      */
     public static List<Tweet> writtenBy(List<Tweet> tweets, String username) {
-        throw new RuntimeException("not implemented");
+        List<Tweet> result = new ArrayList<>();
+        for (Tweet tweet : tweets) {
+            if (tweet.getAuthor().equalsIgnoreCase(username)) {
+                result.add(tweet);
+            }
+        }
+        return result;
     }
 
     /**
@@ -41,7 +51,17 @@ public class Filter {
      *         in the same order as in the input list.
      */
     public static List<Tweet> inTimespan(List<Tweet> tweets, Timespan timespan) {
-        throw new RuntimeException("not implemented");
+        List<Tweet> result = new ArrayList<>();
+        Instant start = timespan.getStart();
+        Instant end = timespan.getEnd();
+
+        for (Tweet tweet : tweets) {
+            Instant t = tweet.getTimestamp();
+            if ((t.equals(start) || t.isAfter(start)) && (t.equals(end) || t.isBefore(end))) {
+                result.add(tweet);
+            }
+        }
+        return result;
     }
 
     /**
@@ -60,7 +80,25 @@ public class Filter {
      *         same order as in the input list.
      */
     public static List<Tweet> containing(List<Tweet> tweets, List<String> words) {
-        throw new RuntimeException("not implemented");
+        List<Tweet> result = new ArrayList<>();
+        if (words.isEmpty()) return result;
+
+        // lowercase filter words
+        Set<String> lowerWords = new HashSet<>();
+        for (String word : words) {
+            lowerWords.add(word.toLowerCase());
+        }
+
+        for (Tweet tweet : tweets) {
+            String[] tweetWords = tweet.getText().toLowerCase().split("\\s+");
+            for (String w : tweetWords) {
+                if (lowerWords.contains(w)) {
+                    result.add(tweet);
+                    break; // add only once in case word is in tweet multiple times
+                }
+            }
+        }
+        return result;
     }
 
 }
