@@ -32,6 +32,7 @@ public class ExtractTest {
     private static final Tweet tweet5 = new Tweet(5, "femist2", "why are men", d4);
     private static final Tweet tweet6 = new Tweet(6, "tsfan11", "omg @taylorswift girliee congratss", d3);
     private static final Tweet tweet7 = new Tweet(7, "politician101", "After a long night of talks mediated by @realdonaldtrump, I am pleased to announce that @narendramodi and @CMShehbaz have agreed to a FULL AND IMMEDIATE CEASEFIRE. Congratulations to both countries on using @common_sense and @great-1ntelligence. Thank you for your attention to this matter!", d2);
+    private static final Tweet tweet8 = new Tweet(8, "freelancer", "custom videos email at surybae@gmail.com", d1);
 
 
     @Test(expected=AssertionError.class)
@@ -76,11 +77,17 @@ public class ExtractTest {
         Set<String> mentionedUsers = Extract.getMentionedUsers(Arrays.asList(tweet6));
     }
 
+    // tests multiple mentions in 1 tweet, multiple in multiple, and other uses of @ like @gmail.com
     @Test
     public void testGetMentionedUsersMultiple() {
-        Set<String> mentionedUsers = Extract.getMentionedUsers(Arrays.asList(tweet6, tweet7));
+        Set<String> mentionedUsers = Extract.getMentionedUsers(Arrays.asList(tweet6, tweet7, tweet8));
         Set<String> expectedMentions = new HashSet<>();
-        // continue here
+        expectedMentions.add("taylorswift");
+        expectedMentions.add("realdonaldtrump");
+        expectedMentions.add("narendramodi");
+        expectedMentions.add("cmshehbaz");
+        expectedMentions.add("common_sense");
+        expectedMentions.add("great_1ntelligence");
 
         assertEquals("expected mentions", mentionedUsers, expectedMentions);
     }
